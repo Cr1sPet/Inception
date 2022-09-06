@@ -1,0 +1,60 @@
+  version: '3'
+
+  services:
+
+    adminer:
+      image: adminer
+      restart: always
+      ports:
+        - 8087:8081
+
+    mysql:
+
+        image: mariadb
+
+        volumes:
+
+        - ./data/mysql:/var/lib/mysql
+
+        environment:
+
+              MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+              MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+              MYSQL_USER: ${MYSQL_USER}
+
+              MYSQL_PASSWORD: MYSQL_PASSWORD
+
+        restart: always
+
+    wordpress:
+      image: wordpress:php7.3-fpm-alpine
+      volumes:
+        - ./data/html:/var/www/html
+      depends_on:
+        - mysql
+      environment:
+        WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+        WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+        WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+        WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+      links:
+        - mysql
+      restart: always
+
+    nginx:
+
+      image: nginx:alpine
+      
+      volumes:
+        - ./requirements/conf-ng:/etc/nginx/conf.d
+        - ./requirements/data/html:/var/www/html
+        
+      ports:
+        - 8080:80
+          
+      links:
+        - wordpress
