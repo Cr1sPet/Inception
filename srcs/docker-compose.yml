@@ -5,8 +5,7 @@ services:
   wordpress:
     image: wordpress
     restart: always
-    ports:
-      - 8080:80
+
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
@@ -32,12 +31,12 @@ services:
       - net
 
   nginx:
-    image: nginx:latest
+    build: requirements/nginx
     volumes:
       - ./requirements/nginx:/etc/nginx/conf.d
       - ./requirements/data/html:/var/www/html
     ports:
-      - 8081:80
+      # - 8081:80
       - 443:443
     links:
       - wordpress
