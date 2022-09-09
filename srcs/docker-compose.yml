@@ -2,6 +2,24 @@ version: '3.1'
 
 services:
 
+  nginx:
+    build: requirements/nginx
+    volumes:
+      - ./requirements/nginx/tools/:/etc/nginx/conf.d
+      - ./requirements/data/html:/var/www/html
+
+    stdin_open : true
+    tty: true
+    ports:
+      - 443:443
+
+    depends_on:
+      - wordpress
+
+    networks:
+      - net
+
+
   wordpress:
     image: wordpress:6-php7.4-fpm
     restart: always
@@ -12,7 +30,10 @@ services:
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
     volumes:
-      - ./requirements/data/html:/var/www/wordpress
+      - ./requirements/data/html:/var/www/html/
+
+    depends_on:
+      - db
 
     networks:
       - net
@@ -30,19 +51,7 @@ services:
     networks:
       - net
 
-  nginx:
-    build: requirements/nginx
-    volumes:
-      - ./requirements/nginx:/etc/nginx/conf.d
-      - ./requirements/data/html:/var/www/wordpress
-    ports:
-      # - 8081:80
-      - 443:443
-    links:
-      - wordpress
-
-    networks:
-      - net
+  
 
 networks:
   net:
