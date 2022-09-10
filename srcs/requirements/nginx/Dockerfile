@@ -5,4 +5,6 @@ RUN openssl  req -x509 -nodes -newkey rsa:4096 -keyout /etc/ssl/private/nginx.ke
  -out /etc/ssl/certs/nginx.crt -sha256 -days 365 -subj \
   "/C=RU/ST=Tatarstan/L=Kazan/CN=jchopped.42.fr"
 
+COPY ./tools/nginx.conf /etc/nginx/conf.d
+
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.8'
 
 services:
 
@@ -6,7 +6,7 @@ services:
     build: requirements/nginx
     volumes:
       - ./requirements/nginx/tools/:/etc/nginx/conf.d
-      - ./requirements/data/html:/var/www/html
+      - ./requirements/data/html:/var/www/html/wordpress
 
     stdin_open : true
     tty: true
@@ -14,23 +14,27 @@ services:
       - 443:443
 
     depends_on:
-      - wordpress
+      - wp
 
     networks:
       - net
 
 
-  wordpress:
-    image: wordpress:6-php7.4-fpm
+  wp:
+    # image: wordpress:6-php7.4-fpm
+    build: requirements/wordpress
+  
     restart: always
 
+    stdin_open : true
+    tty: true
     environment:
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-    volumes:
-      - ./requirements/data/html:/var/www/html/
+    # volumes:
+      # - ./requirements/data/html:/var/www/html/wordpress/
 
     depends_on:
       - db
