@@ -2,39 +2,37 @@ version: '3.8'
 
 services:
 
-  nginx:
-    build: requirements/nginx
-    volumes:
-      - ./requirements/nginx/tools/:/etc/nginx/conf.d
-      - ./requirements/data/html:/var/www/html/wordpress
+  # nginx:
+  #   build: requirements/nginx
+  #   volumes:
+  #     - ./requirements/nginx/tools/:/etc/nginx/sites-enabled/
+  #     - /home/${USER}/data/wp:/var/www/wordpress
 
-    stdin_open : true
-    tty: true
-    ports:
-      - 443:443
+  #   stdin_open : true
+  #   tty: true
+  #   ports:
+  #     - 443:443
 
-    depends_on:
-      - wp
+  #   depends_on:
+  #     - wp
 
-    networks:
-      - net
+  #   networks:
+  #     - net
 
 
   wp:
-    # image: wordpress:6-php7.4-fpm
     build: requirements/wordpress
   
     restart: always
 
     stdin_open : true
     tty: true
-    environment:
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-    # volumes:
-      # - ./requirements/data/html:/var/www/html/wordpress/
+    env_file: .env
+    volumes:
+      - wp_v:/var/www/wordpress/
+
+    ports:
+      - 80:9000
 
     depends_on:
       - db
@@ -43,15 +41,11 @@ services:
       - net
 
   db:
-    image: mariadb
+    build: requirements/mariadb
     restart: always
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_RANDOM_ROOT_PASSWORD: ${MYSQL_RANDOM_ROOT_PASSWORD}
+    env_file: .env
     volumes:
-      - ./requirements/data/mysql:/var/lib/mysql
+      - db_v:/var/lib/mysql
     networks:
       - net
 
@@ -62,6 +56,17 @@ networks:
     driver: bridge
 
 
-# volumes:
-  # wordpress1:
-  # db:
+volumes:
+  wp_v:
+      driver: local
+      driver_opts:
+        device: ${HOME}/data/wp
+        o: bind
+        type: none
+
+  db_v:
+      driver: local
+      driver_opts:
+        device: ${HOME}/data/db
+        o: bind
+        type: none
