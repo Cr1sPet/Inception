@@ -29,7 +29,7 @@ services:
     tty: true
     env_file: .env
     volumes:
-      - wp_v:/var/www/wordpress/
+      - wp_v:/var/www/html/wordpress/
 
     ports:
       - 80:9000

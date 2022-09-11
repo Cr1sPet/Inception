@@ -3,18 +3,20 @@
 # Замените все вхождения строки в файле, перезаписав файл (т.е. на месте):
 sed -i "s/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/" "/etc/php/7.3/fpm/pool.d/www.conf";
 
+mkdir -p /var/www/html/wordpress;
+
 # -R рекурсивное изменение прав доступа для каталогов и их содержимого
-chmod -R 775 /var/www/wordpress;
+chmod -R 775 /var/www/html/wordpress;
 
 # Следующий пример изменит владельца всех файлов и 
-# подкаталогов в /var/www/wordpress каталоге на нового владельца и группу с именем www-data :
-chown -R www-data /var/www/wordpress;
+# подкаталогов в /var/www/html/wordpress каталоге на нового владельца и группу с именем www-data :
+chown -R www-data /var/www/html/wordpress;
 mkdir -p /run/php/;
 touch /run/php/php7.3-fpm.pid;
 
-# php -S 0.0.0.0:9000 -t /var/www/wordpress
+# php -S 0.0.0.0:9000 -t /var/www/html/wordpress
 
-if [ ! -f /var/www/wordpress/wp-config.php ]; then
+if [ ! -f /var/www/html/wordpress/wp-config.php ]; then
 echo "Wordpress: setting up..."
 # После проверки требований загрузите файл wp-cli.phar , используя wget или curl:
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
@@ -23,11 +25,11 @@ chmod +x wp-cli.phar;
 # Чтобы использовать WP-CLI из командной строки, набрав wp, сделайте файл исполняемым и 
 # переместите его куда-нибудь в PATH. Например:
 mv wp-cli.phar /usr/local/bin/wp;
-cd /var/www/wordpress;
+cd /var/www/html/wordpress;
 # Загружает и извлекает основные файлы WordPress по указанному пути
 
 wp core download --allow-root;
-mv /var/www/wp-config.php /var/www/wordpress;
+mv /var/www/html/wp-config.php /var/www/html/wordpress;
 echo "Wordpress: creating users..."
 # Создает таблицы WordPress в базе данных, 
 # используя URL-адрес, заголовок и предоставленные данные пользователя-администратора по умолчанию
