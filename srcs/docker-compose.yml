@@ -1,72 +1,59 @@
-version: '3.8'
-
-services:
-
-  # nginx:
-  #   build: requirements/nginx
-  #   volumes:
-  #     - ./requirements/nginx/tools/:/etc/nginx/sites-enabled/
-  #     - /home/${USER}/data/wp:/var/www/wordpress
-
-  #   stdin_open : true
-  #   tty: true
-  #   ports:
-  #     - 443:443
-
-  #   depends_on:
-  #     - wp
-
-  #   networks:
-  #     - net
-
-
-  wp:
-    build: requirements/wordpress
-  
-    restart: always
-
-    stdin_open : true
-    tty: true
-    env_file: .env
-    volumes:
-      - wp_v:/var/www/html/wordpress/
-
-    ports:
-      - 81:9000
-
-    depends_on:
-      - db
-
-    networks:
-      - net
-
-  db:
-    build: requirements/mariadb
-    restart: always
-    env_file: .env
-    volumes:
-      - db_v:/var/lib/mysql
-    networks:
-      - net
-
-  
-
-networks:
-  net:
-    driver: bridge
-
+version: '3.9'
 
 volumes:
-  wp_v:
-      driver: local
-      driver_opts:
-        device: ${HOME}/data/wp
-        o: bind
-        type: none
+  db:
+    name: db
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/db
+  wp:
+    name: wp
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${USER}/data/wp
 
-  db_v:
-      driver: local
-      driver_opts:
-        device: ${HOME}/data/db
-        o: bind
-        type: none
+services:
+  mariadb:
+    container_name: mariadb
+    
+    build: ./requirements/mariadb
+    restart: always
+    env_file: .env
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - project
+    restart: always
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    env_file: .env
+    volumes:
+      - wp:/var/www/html/wordpress
+    networks:
+      - project
+    depends_on:
+      - mariadb
+    restart: always
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    hostname: localhost
+    volumes:
+      - wp:/var/www/html/wordpress
+    networks:
+      - project
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    restart: always
+networks:
+  project:
+    driver: bridge

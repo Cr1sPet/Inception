@@ -1,12 +1,11 @@
 FROM debian:buster
 
+RUN apt update
+RUN apt install -y nginx openssl
+
 EXPOSE 443
 
-RUN apt-get update && apt-get -y install nginx openssl
-RUN openssl  req -x509 -nodes -newkey rsa:4096 -keyout /etc/ssl/private/nginx.key \
- -out /etc/ssl/certs/nginx.crt -sha256 -days 365 -subj \
-  "/C=RU/ST=Tatarstan/L=Kazan/CN=jchopped.42.fr"
+COPY ./conf/default /etc/nginx/sites-enabled/default
+COPY ./tools/start.sh /var/www
 
-COPY ./tools/nginx.conf /etc/nginx/conf.d
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD bash /var/www/start.sh
