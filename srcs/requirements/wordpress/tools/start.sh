@@ -9,20 +9,28 @@ touch /run/php/php7.3-fpm.pid;
 
 if [ ! -f /var/www/html/wordpress/wp-config.php ]; then
 
+# Установки Wordpress CLI
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
-
 chmod +x wp-cli.phar;
-
 mv wp-cli.phar /usr/local/bin/wp;
 cd /var/www/html/wordpress;
 
+# Установка Wordpress файлов
 wp core download --allow-root;
 mv /var/www/wp-config.php /var/www/html/wordpress;
 
+# Создание админа
+wp core install --allow-root --url=${DOMAIN_NAME} \
+                             --title=${WORDPRESS_NAME} \
+                             --admin_user=${WORDPRESS_ROOT_LOGIN} \
+                             --admin_password=${MYSQL_ROOT_PASSWORD} \
+                             --admin_email=${WORDPRESS_ROOT_EMAIL};
 
-wp core install --allow-root --url=${DOMAIN_NAME} --title=${WORDPRESS_NAME} --admin_user=${WORDPRESS_ROOT_LOGIN} --admin_password=${MYSQL_ROOT_PASSWORD} --admin_email=${WORDPRESS_ROOT_EMAIL};
-
-wp user create ${MYSQL_USER} ${WORDPRESS_USER_EMAIL} --user_pass=${MYSQL_PASSWORD} --role=author --allow-root;
+# создание юзера с правами автор
+wp user create  --allow-root ${MYSQL_USER} \
+                             ${WORDPRESS_USER_EMAIL} \
+                             --user_pass=${MYSQL_PASSWORD} \
+                             --role=author;
 
 fi
 
