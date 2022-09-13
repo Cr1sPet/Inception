@@ -1,12 +1,11 @@
-# задаёт базовый (родительский) образ
 FROM debian:buster
 
-# выполняет команду и создаёт слой образа. Используется для установки в контейнер пакетов
 RUN apt update
 RUN apt install -y mariadb-server
 
-COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 COPY ./tools /var/www/
+
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
 EXPOSE 3306
 

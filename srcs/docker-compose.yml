@@ -1,5 +1,9 @@
 version: '3.9'
 
+networks:
+  project:
+    driver: bridge
+
 volumes:
   db:
     name: db
@@ -18,8 +22,7 @@ volumes:
 
 services:
   mariadb:
-    container_name: mariadb
-    
+
     build: ./requirements/mariadb
     restart: always
     env_file: .env
@@ -30,7 +33,7 @@ services:
     restart: always
 
   wordpress:
-    container_name: wordpress
+
     build: ./requirements/wordpress
     env_file: .env
     volumes:
@@ -42,7 +45,7 @@ services:
     restart: always
 
   nginx:
-    container_name: nginx
+  
     build: ./requirements/nginx
     hostname: localhost
     volumes:
@@ -54,6 +57,3 @@ services:
     ports:
       - "443:443"
     restart: always
-networks:
-  project:
-    driver: bridge
