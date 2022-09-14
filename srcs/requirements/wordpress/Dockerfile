@@ -1,7 +1,7 @@
 FROM debian:buster
 
 RUN apt update
-RUN apt install -y php7.3 php-mysqli php-fpm curl
+RUN apt install -y php7.3 php-mysqli mariadb-client php-fpm curl
 
 EXPOSE 9000
 

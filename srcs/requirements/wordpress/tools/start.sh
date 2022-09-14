@@ -17,7 +17,14 @@ cd /var/www/html/wordpress;
 
 # Установка Wordpress файлов
 wp core download --allow-root;
-mv /var/www/wp-config.php /var/www/html/wordpress;
+
+# Создаение wp-config.php
+wp config create --dbname=wordpress \
+                 --dbuser=jchopped \
+                 --dbpass=123 \
+                 --dbhost=mariadb \
+                 --dbcharset=utf8 \
+                 --allow-root;
 
 # Создание админа
 wp core install --allow-root --url=${DOMAIN_NAME} \
