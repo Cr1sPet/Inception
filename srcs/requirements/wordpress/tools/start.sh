@@ -9,16 +9,13 @@ touch /run/php/php7.3-fpm.pid;
 
 if [ ! -f /var/www/html/wordpress/wp-config.php ]; then
 
-# Установки Wordpress CLI
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
 chmod +x wp-cli.phar;
 mv wp-cli.phar /usr/local/bin/wp;
 cd /var/www/html/wordpress;
 
-# Установка Wordpress файлов
 wp core download --allow-root;
 
-# Создаение wp-config.php
 wp config create --dbname=${DB_NAME} \
                  --dbuser=${DB_USER} \
                  --dbpass=${DB_PASS} \
@@ -26,17 +23,15 @@ wp config create --dbname=${DB_NAME} \
                  --dbcharset=utf8 \
                  --allow-root;
 
-# Создание админа
 wp core install --allow-root --url=${DOMAIN_NAME} \
-                             --title=${WORDPRESS_NAME} \
+                             --title=${TITLE} \
                              --admin_user=${WORDPRESS_ROOT_LOGIN} \
-                             --admin_password=${MYSQL_ROOT_PASSWORD} \
+                             --admin_password=${WORDPRESS_ROOT_PASSWORD} \
                              --admin_email=${WORDPRESS_ROOT_EMAIL};
 
-# создание юзера с правами автор
-wp user create  --allow-root ${MYSQL_USER} \
+wp user create  --allow-root ${WORDPRESS_USER_LOGIN} \
                              ${WORDPRESS_USER_EMAIL} \
-                             --user_pass=${MYSQL_PASSWORD} \
+                             --user_pass=${WORDPRESS_USER_PASSWORD} \
                              --role=author;
 
 fi
