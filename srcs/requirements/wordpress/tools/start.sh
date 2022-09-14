@@ -19,10 +19,10 @@ cd /var/www/html/wordpress;
 wp core download --allow-root;
 
 # Создаение wp-config.php
-wp config create --dbname=wordpress \
-                 --dbuser=jchopped \
-                 --dbpass=123 \
-                 --dbhost=mariadb \
+wp config create --dbname=${DB_NAME} \
+                 --dbuser=${DB_USER} \
+                 --dbpass=${DB_PASS} \
+                 --dbhost=${DB_HOST} \
                  --dbcharset=utf8 \
                  --allow-root;
 
