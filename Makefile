@@ -27,5 +27,7 @@ clean:
 	-docker rmi -f $(shell docker images -qa)
 	-docker volume rm $(shell docker volume ls -q)
 	-docker network rm $(shell docker network ls -q)
+
+fclean: clean
 	@sudo rm -rf ${WORDPRESS_DATA}/*
 	@sudo rm -rf ${MARIADB_DATA}/*

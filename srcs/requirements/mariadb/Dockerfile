@@ -9,6 +9,5 @@ COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 
 EXPOSE 3306
 
-RUN service mysql start && mysql < /var/www/createdb.sql && rm -f /var/www/createdb.sql
+CMD  bash /var/www/run.sh
 
-CMD /usr/bin/mysqld_safe
