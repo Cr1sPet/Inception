@@ -5,7 +5,7 @@ WORDPRESS_DATA = ${DATA}/wp
 MARIADB_DATA = ${DATA}/db
 
 
-.PHONY: all build up down reset help
+.PHONY: all build up down clean fclean
 
 
 all: build up
@@ -26,7 +26,7 @@ clean:
 	-docker rm $(shell docker ps -qa)
 	-docker rmi -f $(shell docker images -qa)
 	-docker volume rm $(shell docker volume ls -q)
-	-docker network rm $(shell docker network ls -q)
+	-docker network rm $(shell docker network ls -q) 2>/dev/null
 
 fclean: clean
 	@sudo rm -rf ${WORDPRESS_DATA}/*

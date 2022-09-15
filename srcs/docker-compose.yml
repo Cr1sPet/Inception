@@ -1,7 +1,7 @@
 version: '3.9'
 
 networks:
-  project:
+  inception:
     driver: bridge
 
 volumes:
@@ -22,38 +22,38 @@ volumes:
 
 services:
   mariadb:
-
+    container_name: mariadb
     build: ./requirements/mariadb
     restart: always
     env_file: .env
     volumes:
       - db:/var/lib/mysql
     networks:
-      - project
+      - inception
     restart: always
 
   wordpress:
-
+    container_name: wordpress
     build: ./requirements/wordpress
     env_file: .env
     volumes:
       - wp:/var/www/html/wordpress
     networks:
-      - project
+      - inception
     depends_on:
       - mariadb
     restart: always
 
   nginx:
-  
+    container_name: nginx
     build: ./requirements/nginx
     hostname: localhost
     volumes:
       - wp:/var/www/html/wordpress
     networks:
-      - project
+      - inception
     depends_on:
       - wordpress
     ports:
-      - "443:443"
+      - 443:443
     restart: always
